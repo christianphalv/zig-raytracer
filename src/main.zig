@@ -41,7 +41,7 @@ pub fn main() !void {
 
     const write_time = write_block: {
         const start = std.time.milliTimestamp();
-        try image.write_image();
+        try image.write_image(allocator);
         const end = std.time.milliTimestamp();
         break :write_block end - start;
     };

@@ -235,21 +235,27 @@ pub const Image = struct {
         return self.width * y + x;
     }
 
-    pub fn write_image(image: *Image) !void {
+    pub fn write_image(image: *Image, allocator: Allocator) !void {
         const file = try std.fs.cwd().createFile("output.ppm", .{});
         defer file.close();
         var writer = file.writer();
 
         try writer.print("P3\n{} {}\n255\n", .{ image.width, image.height });
 
+        var buffer: []u8 = try allocator.alloc(u8, image.width * image.height * 15);
+        defer allocator.free(buffer);
+
+        var index: usize = 0;
         for (0..image.height) |j| {
             for (0..image.width) |i| {
                 const r: u8 = @intFromFloat(image.data[image.at(i, j)].r * 255.0);
                 const g: u8 = @intFromFloat(image.data[image.at(i, j)].g * 255.0);
                 const b: u8 = @intFromFloat(image.data[image.at(i, j)].b * 255.0);
-                // const a: u8 = image.data[image.at(i, j)].a; // Note: PPM doesn't seem to support alpha
-                try writer.print("{} {} {}\n", .{ r, g, b });
+                const written = std.fmt.bufPrint(buffer[index..], "{} {} {}\n", .{ r, g, b }) catch unreachable;
+                index += written.len;
             }
         }
+
+        _ = try writer.write(buffer[0..index]);
     }
 };
