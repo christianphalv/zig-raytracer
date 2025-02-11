@@ -175,8 +175,6 @@ pub const Camera = struct {
         const image_height: usize = @max(@as(usize, @intFromFloat(@as(f32, @floatFromInt(image_width)) / aspect_ratio)), 1);
         const viewport_height: f32 = viewport_width * (@as(f32, @floatFromInt(image_height)) / @as(f32, @floatFromInt(image_width)));
 
-        std.debug.print("Viewport height: {}\n", .{viewport_height});
-
         return Camera{
             .position = position,
             .direction = direction,
@@ -238,8 +236,6 @@ pub const Image = struct {
     }
 
     pub fn write_image(image: *Image) !void {
-        std.debug.print("Width: {}, Height: {}\n", .{ image.width, image.height });
-
         const file = try std.fs.cwd().createFile("output.ppm", .{});
         defer file.close();
         var writer = file.writer();

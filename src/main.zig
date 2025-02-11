@@ -25,6 +25,10 @@ pub fn main() !void {
         }
     }
 
+    std.debug.print("Image width: {}\n", .{image.width});
+    std.debug.print("Image height: {}\n", .{image.height});
+    std.debug.print("Total number of pixels: {}\n", .{image.width * image.height});
+
     const render_time = render_block: {
         const start = std.time.milliTimestamp();
         camera.render(&image);
